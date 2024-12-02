@@ -2,6 +2,7 @@ import path from 'node:path';
 import express from 'express';
 import mysql from 'mysql2/promise';
 import { fileURLToPath } from 'url';
+import bcrypt from "bcrypt";
 
 const app = express();
 
@@ -18,9 +19,7 @@ app.get('/', (req, res) => {
 app.use(express.static('./public'));
 
 
-app.listen(8080, () => {
-    console.log("server is active");
-});
+
 
 const pool = mysql.createPool({
   host: '127.0.0.1',
@@ -42,3 +41,21 @@ async function logBananas() {
 }
 
 logBananas();
+let password2 = "hello";
+let salt = bcrypt.genSaltSync(10);
+const hash = await bcrypt.hash(password2, 11);
+console.log(hash);
+
+app.use(express.json());
+app.post('/api/users', async (req, res) => {
+  try {
+      const { email, password1, password2 } = req.body;
+      console.log(email)
+  } catch (error) {
+      console.error('Account creation error:', error);
+  }
+});
+
+app.listen(8080, () => {
+  console.log("server is active");
+});

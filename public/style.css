@@ -6,8 +6,24 @@
     background: -webkit-linear-gradient(to right, #24eeeb, #36a7d8, #367edd, #4b45b4);
     
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: linear-gradient(to right, #5cdb79, #5cde38, #239c21, #196918);
-    }
+    background: linear-gradient(to right, 
+    #4caf50 0%,    /* Outfield Grass - Bright Green */
+    #4caf50 12.5%, 
+    #388e3c 12.5%,  /* Grass - Slightly Darker Green */
+    #388e3c 25%, 
+    #4caf50 25%,    /* Outfield Grass - Bright Green */
+    #4caf50 37.5%, 
+    #2e7d32 37.5%,  /* Grass - Darker Green */
+    #2e7d32 50%, 
+    #4caf50 50%,    /* Outfield Grass - Bright Green */
+    #4caf50 62.5%, 
+    #2e7d32 62.5%,  /* Grass - Darker Green */
+    #2e7d32 75%, 
+    #4caf50 75%,    /* Grass - Slightly Darker Green */
+    #4caf50 87.5%, 
+    #2e7d32 87.5%,  /* Outfield Grass - Bright Green */
+    #2e7d32 100%);   /* Outfield Grass - Bright Green */
+}
     
     @media (min-width: 768px) {
     .gradient-form {
@@ -28,4 +44,21 @@
     }
     #logIn{
         margin-right:10px;
+        background-color: #4caf50 ;
+    }
+    #forgotPasswordButton{
+        color: #2e7d32;
+        border-color: #2e7d32;
+    }
+    @media (max-width: 769px) {
+        #desktopOnly{
+            display: none;
+        }
+    }
+    #beige{
+        background-color: rgb(243, 237, 237);
+        color:black;
+    }
+    #confirmPassword{
+        display: none;
     }
