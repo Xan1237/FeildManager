@@ -86,40 +86,97 @@
     </div>
 
     <script>
+
+
         const monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        const currentYear = 2023;
-        let currentMonth = 0;
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+const currentYear = 2023;
+let currentMonth = 0;
 
-        const monthYearLabel = document.getElementById("monthYear");
-        const calendarDays = document.getElementById("calendarDays");
+const monthYearLabel = document.getElementById("monthYear");
+const calendarDays = document.getElementById("calendarDays");
 
-        function generateCalendar(year, month) {
-            calendarDays.innerHTML = "";
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
+function generateCalendar(year, month) {
+    calendarDays.innerHTML = "";
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            // Display the month and year
-            monthYearLabel.textContent = `${monthNames[month]} ${year}`;
+    // Display the month and year
+    monthYearLabel.textContent = `${monthNames[month]} ${year}`;
 
-            // Add empty days for padding before the first day
-            for (let i = 0; i < firstDay; i++) {
-                const emptyDiv = document.createElement("div");
-                emptyDiv.className = "day empty";
-                calendarDays.appendChild(emptyDiv);
-            }
+    // Add empty days for padding before the first day
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDiv = document.createElement("div");
+        emptyDiv.className = "day empty";
+        calendarDays.appendChild(emptyDiv);
+    }
 
-            // Add days of the month
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayDiv = document.createElement("div");
-                const p = document.createElement("p");
-                dayDiv.className = "day filled";
-                dayDiv.textContent = day;
-                calendarDays.appendChild(dayDiv);
-            }
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayDiv = document.createElement("div");
+        dayDiv.className = "day filled dayNum";
+        dayDiv.textContent = day;
+        
+        // Add click event listener to each day
+        dayDiv.addEventListener("click", () => {
+            // Call backend with selected date
+            fetchAvailableAppointments(year, month, day);
+        });
+
+        calendarDays.appendChild(dayDiv);
+    }
+}
+
+// New function to fetch available appointments
+async function fetchAvailableAppointments(year, month, day) {
+    try {
+        // Format the date for API call (adjust as needed for your backend)
+        const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        let results = "";
+        // Example fetch call - replace with your actual backend endpoint
+        const response = await fetch('/api/appointments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                year: year,
+                month: month + 1, // adding 1 because months are 0-indexed
+                day: day,
+                fullDate: formattedDate,
+                results, results
+            })
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch appointments');
         }
+        
+        const appointments = await response.json();
+        // Handle the appointments (e.g., display in a modal or list)
+        displayAppointments(appointments);
+
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
+        // Optional: show error to user
+        alert('Could not fetch available appointments');
+    }
+}
+
+// Optional function to display appointments
+function displayAppointments(appointments) {
+    // Implement how you want to show the appointments
+    // This could be a modal, a separate div, etc.
+    console.log('Available Appointments:', appointments);
+    console.log(appointments["appointment"]["results"]);
+    // Example: Basic alert
+    if (appointments.length > 0) {
+        alert(`Available Appointments: ${appointments.map(a => a.time).join(', ')}`);
+    } else {
+        alert('No appointments available for this date');
+    }
+}
 
         document.getElementById("prevMonth").addEventListener("click", () => {
             if (currentMonth === 0) {

@@ -124,6 +124,40 @@ app.get('/api/protected', verifyToken, (req, res) => {
   res.json({ success: true, message: "You have access to this protected route" });
 });
 
+
+
+app.post('/api/appointments', async(req, res) => {
+  console.log("hiiii");
+  // Extract the data from the request body
+  const { year, month, day, fullDate } = req.body;
+
+  // Validate the data (basic example)
+  if (!year || !month || !day || !fullDate) {
+      return res.status(400).json({ error: 'Missing required fields' });
+  }
+  const [results] = await pool.query("SELECT * FROM bookings WHERE booking_date = ?", [fullDate]);
+  console.log(results);
+
+  
+  // Here, you could save the appointment to a database
+  // e.g., db.saveAppointment({ year, month, day, fullDate });
+
+  // Respond with a success message
+  res.status(201).json({
+      message: 'Appointment successfully created',
+      appointment: { year, month, day, fullDate, results },
+  });
+});
+
+
+
+
+
+
+
+
+
+
 // Serve index.html
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'));
