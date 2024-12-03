@@ -50,10 +50,14 @@
         color: #2e7d32;
         border-color: #2e7d32;
     }
-    @media (max-width: 769px) {
+    @media (max-width: 992px) {
         #desktopOnly{
             display: none;
         }
+    }
+    #desktopOnly{
+        background-color: rgb(243, 237, 237);
+        color:black;
     }
     #beige{
         background-color: rgb(243, 237, 237);
