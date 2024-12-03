@@ -7,6 +7,8 @@ localStorage.clear();
 let create = false;
 let forgotPasswordText = document.getElementById("forgotPasswordText");
 
+
+//when the create new account button is clickes
 createAccount.addEventListener("click", function() {
     newAccount.style.display = "block";
     loginText.innerHTML = "Create Your New Account";
@@ -15,12 +17,15 @@ createAccount.addEventListener("click", function() {
     create = true;
 });
 
+
+//when the login/create acount button is clicked
 login.addEventListener("click", function() {
     let password1 = document.getElementById("password1").value;
     let password2 = document.getElementById("password2").value;
     let email = document.getElementById("email").value;
 
-    if (create) {  // Account creation logic
+    //create account logic
+    if (create) {  
         fetch('/api/users', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -42,7 +47,11 @@ login.addEventListener("click", function() {
         .catch((error) => {
             console.error("Error:", error);
         });
-    } else {  // Login logic
+    } 
+
+    //login process for someone who already has an account
+    else {  
+        //sends user details to the backend
         fetch('/api/users/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -51,13 +60,17 @@ login.addEventListener("click", function() {
                 password1: password1
             })
         })
+
+        //gets the response on if its valid or not
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                localStorage.setItem('authToken', data.token);  // Store JWT token in localStorage
+                //stores the identity token for security reasons
+                localStorage.setItem('authToken', data.token);  
                 console.log("Login successful");
                 console.log(data.token);
-                window.location.href = 'feildOptions.html'; // Redirect to a protected page after login
+                //goes to feild selection site
+                window.location.href = 'feildOptions.html'; 
             } else {
                 console.log(data.token);
                 console.log("Login failed:", data.message);

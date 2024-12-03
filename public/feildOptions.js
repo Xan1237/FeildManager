@@ -1,7 +1,13 @@
 fetchProtectedData();
+
+/***
+ * This function makes certain that the only way a users gains access to this site is if they first login
+ * this is done using a token stored in local storege if the user does not have permission
+ * aka a token they will get there acess rejected
+ */
 function fetchProtectedData() {
     const token = localStorage.getItem('authToken');
-
+    //calls to backend
     fetch('/api/protected', {
         method: 'GET',
         headers: {
@@ -9,6 +15,7 @@ function fetchProtectedData() {
             'Authorization': `Bearer ${token}`
         }
     })
+
     .then(response => {
         if (!response.ok) {
             // Handle unauthorized or forbidden access

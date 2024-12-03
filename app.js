@@ -26,13 +26,22 @@ const pool = mysql.createPool({
 
 // Account creation function (Add new user)
 async function addNewUser(email, password1, password2) {
+
+  //makes sure the passwords match
   if (password1 !== password2) {
     throw new Error("Passwords do not match");
   }
+  //makes certain password is not empty
+  if(password1.length < 1){
+    throw new Error("password too short")
+  }
+  //validates email adress
   const patt = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if(!patt.test(email)){
     throw new Error("invalid email");
   }
+
+  //hashes
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password1, salt);
   
@@ -81,15 +90,16 @@ function verifyToken(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, 'your_jwt_secret'); // Verify the token
-    req.user = decoded; // Attach user data to the request object
-    next(); // Continue to the next middleware or route handler
+    //checks token validity
+    const decoded = jwt.verify(token, 'your_jwt_secret'); 
+    req.user = decoded; 
+    next(); 
   } catch (error) {
     return res.status(401).json({ success: false, message: 'Invalid or expired token' });
   }
 }
 
-// Create new user endpoint (for account creation)
+// Create new user  (for account creation)
 app.post('/api/users', async (req, res) => {
   try {
     const { email, password1, password2 } = req.body;
@@ -150,15 +160,7 @@ app.post('/api/appointments', async(req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-// Serve index.html
+// connects to index.html
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'));
 });
