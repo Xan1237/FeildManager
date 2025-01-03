@@ -19,6 +19,7 @@ function fetchProtectedData() {
     .then(response => {
         if (!response.ok) {
             // Handle unauthorized or forbidden access
+            window.location.href = './index.html';
             throw new Error('Unauthorized access');
         }
         return response.json();

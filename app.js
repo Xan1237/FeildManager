@@ -4,8 +4,55 @@ import mysql from 'mysql2/promise';
 import { fileURLToPath } from 'url';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"; // Add JWT for authentication
+import dotenv from "dotenv/config";
 
+import { Sequelize, DataTypes, Op } from 'sequelize';
 const app = express();
+const port = process.env.PORT || 8080;
+
+const sequelize = new Sequelize(process.env.DB_URL, {
+  dialect: "postgres",
+  dialectOptions: {
+      ssl: {
+          require: true,
+          rejectUnauthorized: false
+      }
+  },
+  logging: false,
+})
+
+sequelize.sync().then(() => {
+  console.log("db conected");
+}).catch((err) => {
+  console.log(err);
+});
+
+const login = sequelize.define('login', {
+
+  email: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
+  password: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
+});
+
+async function createUser(email1, password1) {
+  try {
+    const newUser = await login.create({
+      email: email1,
+      password: password1
+    });
+    console.log("User created:", newUser.toJSON());
+  } catch (error) {
+    console.error("Error creating user:", error);
+  }
+}
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,7 +65,7 @@ const pool = mysql.createPool({
   host: '127.0.0.1',
   user: 'root',
   password: 'ou812Xander$',  
-  database: 'feildmanager',
+  database: 'fieldmanager',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -46,9 +93,7 @@ async function addNewUser(email, password1, password2) {
   const hashedPassword = await bcrypt.hash(password1, salt);
   
   try {
-    await pool.query("INSERT INTO bananas (userName, passwords) VALUES (?, ?)", [
-      email, hashedPassword
-    ]);
+    createUser(email, hashedPassword);
     console.log("New user created successfully");
   } catch (error) {
     console.error("Error adding new user:", error);
@@ -59,12 +104,17 @@ async function addNewUser(email, password1, password2) {
 // User verification function (Validate login credentials)
 async function verifyUser(email, password1) {
   try {
-    const [results] = await pool.query("SELECT * FROM bananas WHERE userName = ?", [email]);
-    if (results.length === 0) {
-      return false; 
+    const user = await login.findOne({
+      where: { email },
+      attributes: ['email', 'password'] // Only select necessary fields
+    });
+
+    // If user not found
+    if (!user) {
+      return false;
     }
 
-    const actualPassword = results[0]["passwords"];
+    const actualPassword = user.password;
     const valid = await bcrypt.compare(password1, actualPassword);
     return valid; 
   } catch (error) {
