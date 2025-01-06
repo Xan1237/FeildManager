@@ -41,6 +41,34 @@ const login = sequelize.define('login', {
   },
 });
 
+const bookings = sequelize.define("bookings", {
+  userName: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
+  email: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
+  phone: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
+  day: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
+  time: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  }
+})
+
 async function createUser(email1, password1) {
   try {
     const newUser = await login.create({
@@ -53,6 +81,24 @@ async function createUser(email1, password1) {
   }
 }
 
+async function createBooking(field1, email1, name1, phone1, day1, time1){
+  console.log(time1);
+  console.log(email1);
+  try{
+    const newBooking = await bookings.create({
+      userName: name1,
+      email: email1,
+      phone: phone1,
+      day: day1,
+      time: time1
+    });
+    console.log("User created:", newBooking.toJSON());
+  }
+  catch (error) {
+    console.error("Error booking:", error);
+  }
+}
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,16 +106,6 @@ const __dirname = path.dirname(__filename);
 app.use(express.static('./public'));
 app.use(express.json()); // To parse JSON body in requests
 
-// MySQL connection pool
-const pool = mysql.createPool({
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'ou812Xander$',  
-  database: 'fieldmanager',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
 
 // Account creation function (Add new user)
 async function addNewUser(email, password1, password2) {
@@ -103,6 +139,7 @@ async function addNewUser(email, password1, password2) {
 
 // User verification function (Validate login credentials)
 async function verifyUser(email, password1) {
+  
   try {
     const user = await login.findOne({
       where: { email },
@@ -167,8 +204,7 @@ app.post('/api/users/login', async (req, res) => {
   try {
     const valid = await verifyUser(email, password1);
     if (valid) {
-      const [results] = await pool.query("SELECT * FROM bananas WHERE userName = ?", [email]);
-      const token = generateAuthToken(results[0].id);
+      const token = generateAuthToken(email);
       res.status(200).json({ success: true, token }); // Send JWT token upon successful login
     } else {
       res.status(401).json({ success: false, message: "Invalid email or password" });
@@ -187,21 +223,16 @@ app.get('/api/protected', verifyToken, (req, res) => {
 
 
 app.post('/api/appointments', async(req, res) => {
-  console.log("hiiii");
   // Extract the data from the request body
   const { year, month, day, fullDate } = req.body;
 
-  // Validate the data (basic example)
+  // Validate the data 
   if (!year || !month || !day || !fullDate) {
       return res.status(400).json({ error: 'Missing required fields' });
   }
-  const [results] = await pool.query("SELECT * FROM bookings WHERE booking_date = ?", [fullDate]);
   console.log(results);
 
   
-  // Here, you could save the appointment to a database
-  // e.g., db.saveAppointment({ year, month, day, fullDate });
-
   // Respond with a success message
   res.status(201).json({
       message: 'Appointment successfully created',
@@ -209,6 +240,29 @@ app.post('/api/appointments', async(req, res) => {
   });
 });
 
+
+//receive apointment information
+app.post('/api/bookings', async(req, res) => {
+  try {
+      const { field, email, userName, phone,  day, time } = req.body;
+      const existingBoking = await bookings.findOne({ day: day, time: time });
+      console.log(existingBoking);
+      if(existingBoking==null){
+      console.log(`Email: ${email}, Username: ${userName}, Day: ${day}, Time: ${time}`);
+      createBooking(field, email, userName, phone,  day, time)
+      }
+      else{
+        console.log("apointment already created")
+      }
+      res.status(201).json({
+        message: 'Appointment successfully created',
+        bookings: { email, userName, day, time }
+      });
+    } catch (error) {
+      console.error('Backend Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // connects to index.html
 app.get('/', (req, res) => {
