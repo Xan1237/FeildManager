@@ -39,6 +39,7 @@ login.addEventListener("click", function() {
         .then(data => {
             if (data.success) {
                 console.log("Account created successfully");
+                window.location. reload();
                 // Optionally redirect or show success message
             } else {
                 console.log("Account creation failed:", data.message);
@@ -70,10 +71,15 @@ login.addEventListener("click", function() {
                 console.log("Login successful");
                 console.log(data.token);
                 //goes to feild selection site
-                window.location.href = 'feildOptions.html'; 
+                window.location.href = 'fieldOptions\\feildOptions.html'; 
             } else {
+                //login failed
+                let email = document.getElementById("email");
+                let password1 = document.getElementById("password1");
                 console.log(data.token);
                 console.log("Login failed:", data.message);
+                password1.style.borderColor = "red";
+                email.style.borderColor = "red";
             }
         })
         .catch((error) => {
@@ -82,11 +88,13 @@ login.addEventListener("click", function() {
     }
 });
 
+//changes layout to acomodate a account creation form
 createAccount.addEventListener("click", function() {
     newAccount.style.display = "block";
     loginText.innerHTML = "Create Your New Account";
     login.innerHTML = "Create";
     forgotPasswordText.style.display = "none";
+    createAccount.style.display = "none";
     create = true;
 });
 
@@ -146,10 +154,14 @@ document.addEventListener('keydown', function(event) {
                 console.log("Login successful");
                 console.log(data.token);
                 //goes to feild selection site
-                window.location.href = 'feildOptions.html'; 
+                window.location.href = 'fieldOptions\\feildOptions.html'; 
             } else {
+                let password1 = document.getElementById("password1");
+                let email = document.getElementById("email");
                 console.log(data.token);
                 console.log("Login failed:", data.message);
+                password1.style.borderColor = "red";
+                email.style.borderColor = "red";
             }
         })
         .catch((error) => {

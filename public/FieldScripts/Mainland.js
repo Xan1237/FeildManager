@@ -14,8 +14,8 @@ submitButton.addEventListener('click', async function (event) {
     console.log("Email:", email);
     console.log("Time:", time);
 
-    // Retrieve JWT token from localStorage (or sessionStorage, depending on your setup)
-    const token = localStorage.getItem('authToken'); // Ensure token is stored after login
+    // Retrieve JWT token from localStorage 
+    const token = localStorage.getItem('authToken'); 
 
     if (!token) {
         console.error("JWT Token not found. Please log in again.");
@@ -44,7 +44,12 @@ submitButton.addEventListener('click', async function (event) {
 
         if (response.ok) {
             console.log("Booking successful:", result);
-            alert("Booking successfully created!");
+            if(result.BookingsFields.success){
+                alert("Booking successfully created!");
+            }
+            else{
+                alert("Time not available");
+            }
         } else {
             console.error("Booking failed:", result.error || "Unknown error");
             alert(`Error: ${result.error || "Failed to create booking"}`);
@@ -53,4 +58,5 @@ submitButton.addEventListener('click', async function (event) {
         console.error("Network or server error:", error);
         alert("An error occurred while trying to book. Please try again later.");
     }
+    window.location.href = "../myBookings/MyBookings.html"
 });
