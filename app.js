@@ -4,16 +4,16 @@ import mysql from 'mysql2/promise';
 import { fileURLToPath } from 'url';
 import bcrypt from "bcrypt";
 import fs from 'fs'
-import jwt from "jsonwebtoken"; // Add JWT for authentication
+import jwt from "jsonwebtoken"; 
 import dotenv from "dotenv/config";
-
 import { Sequelize, DataTypes, Op } from 'sequelize';
+
+//assignment statments
 const app = express();
 const port = process.env.PORT || 8080;
 console.log(process.env.CA);
+
 //allows use of sequalize to give commands to the progresql server
-
-
 const sequelize = new Sequelize(
   "defaultdb",
   "avnadmin",
@@ -25,21 +25,22 @@ const sequelize = new Sequelize(
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false // Disable SSL certificate verification
+        rejectUnauthorized: false 
       }
     }
   }
 );
 
-
-
-
+//verifies that the database is connected
 sequelize.sync().then(() => {
   console.log("db conected");
 }).catch((err) => {
   console.log(err);
 });
 
+//DEFINING DIFFRENT PROGRESQL OBJECT/TABLES FORMAT
+
+//format used to store user information 
 const login = sequelize.define('login', {
   email: {
     type: DataTypes.STRING,
@@ -53,6 +54,7 @@ const login = sequelize.define('login', {
   },
 });
 
+//The main format for the booking fields on the website
 const BookingsFields = sequelize.define("BookingsFields", {
   field: {
     type: DataTypes.STRING,
@@ -80,6 +82,7 @@ const BookingsFields = sequelize.define("BookingsFields", {
   }
 })
 
+//function called to create a new user
 async function createUser(email1, password1) {
   try {
     const newUser = await login.create({
@@ -92,6 +95,7 @@ async function createUser(email1, password1) {
   }
 }
 
+//function to be called to create a new booking
 async function createBooking(field1, email1, name1, phone1, day1, time1){
   console.log(time1);
   console.log(email1);
@@ -111,12 +115,11 @@ async function createBooking(field1, email1, name1, phone1, day1, time1){
   }
 }
 
-
+//gives instructions to acess front end elements
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 app.use(express.static('./public'));
-app.use(express.json()); // To parse JSON body in requests
+app.use(express.json()); 
 
 
 // Account creation function (Add new user)
@@ -141,6 +144,7 @@ async function addNewUser(email, password1, password2) {
   const hashedPassword = await bcrypt.hash(password1, salt);
   
   try {
+    //Call function that adds user to db
     createUser(email, hashedPassword);
     console.log("New user created successfully");
   } catch (error) {
@@ -151,19 +155,20 @@ async function addNewUser(email, password1, password2) {
 
 // User verification function (Validate login credentials)
 async function verifyUser(email, password1) {
-  
+  //Atempts to find the hash of the email provided
   try {
-    const user = await login.findOne({
+      const user = await login.findOne({
       where: { email },
-      attributes: ['email', 'password'] // Only select necessary fields
+      attributes: ['email', 'password'] 
     });
 
     // If user not found
     if (!user) {
       return false;
     }
-
+    //if the email is found in the db
     const actualPassword = user.password;
+    //compares the hashes of the passwords
     const valid = await bcrypt.compare(password1, actualPassword);
     return valid; 
   } catch (error) {
@@ -174,8 +179,8 @@ async function verifyUser(email, password1) {
 
 // JWT generation function for successful login
 function generateAuthToken(email) {
-  const payload = { email }; // Store email in token payload
-  const secret = 'your_jwt_secret'; // Store this secret in an environment variable
+  const payload = { email }; 
+  const secret = 'your_jwt_secret'; 
   const options = { expiresIn: '1h' };
   return jwt.sign(payload, secret, options);
 }
@@ -190,7 +195,7 @@ function verifyToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, 'your_jwt_secret');
-    req.user = decoded; // This will now contain the email
+    req.user = decoded; 
     next();
   } catch (error) {
     return res.status(401).json({ success: false, message: 'Invalid or expired token' });
@@ -209,12 +214,13 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
+//Receives login request and calls function to verify user
 app.post('/api/users/login', async (req, res) => {
   const { email, password1 } = req.body;
-  
   try {
     const valid = await verifyUser(email, password1);
     if (valid) {
+      //generates jwt token
       const token = generateAuthToken(email);
       res.status(200).json({ success: true, token });
     } else {
@@ -233,6 +239,7 @@ app.get('/api/protected', verifyToken, (req, res) => {
   res.json({ success: true, message: "You have access to this protected route" });
 });
 
+//gets bookings matching users email based on jwt to  be sent to frontend
 app.get('/api/MyBookings', verifyToken, async(req, res) => {
   const email = req.user.email; // Now this will work correctly
   try {
@@ -243,6 +250,8 @@ app.get('/api/MyBookings', verifyToken, async(req, res) => {
   }
 });
 
+
+//I dont think this is used but im too scared to rmove this
 app.post('/api/appointments', async(req, res) => {
   // Extract the data from the request body
   const { year, month, day, fullDate } = req.body;
@@ -262,11 +271,13 @@ app.post('/api/appointments', async(req, res) => {
 });
 
 
-//receive apointment information
+//receive apointment information assuming 2 hour booking slots
 app.post('/api/bookings', verifyToken,  async(req, res) => {
   try {
       const { field, email, userName, phone,  day, time } = req.body;
       console.log(field);
+
+      //this block creates variables for the times after and before the booking
       let hours = parseInt((time.slice(0,2)));
       let increase = (hours +1) %24;
       let decrease = (hours-1) %24;
@@ -285,6 +296,8 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
       before = decrease+ time.slice(2, time.length);
       console.log(after);
       console.log(before);
+
+      //the multitude of if statments checks the times after and before to make sure theres no overlap
       let existingBoking = await BookingsFields.findOne({ where: { field: field, day: day, time: time } });
       if(existingBoking==null){
          existingBoking = await BookingsFields.findOne({ where: { field: field, day: day, time: after } });
@@ -293,6 +306,8 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
         existingBoking = await BookingsFields.findOne({ where: { field: field, day: day, time: before } });
       }
       console.log(existingBoking);
+
+      //The time is available
       if(existingBoking==null){
       console.log(`Email: ${email}, Username: ${userName}, Day: ${day}, Time: ${time}`);
       await createBooking(field, req.user.email, userName, phone,  day, time);
@@ -300,6 +315,7 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
       else{
         console.log("apointment already created")
       }
+      //time available
       if(existingBoking==null){
         let success = true;
       res.status(201).json({
@@ -307,6 +323,7 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
         BookingsFields: { email, userName, day, time, success }
       });
     }
+    //time not available
     else{
       let success = false;
       res.status(201).json({
@@ -320,17 +337,17 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
   }
 });
 
-
+//deletes bookings given a user action
 app.delete('/api/bookings/:id', verifyToken, async (req, res) => {
   const bookingId = req.params.id;
-  const userEmail = req.user.email; // Get email from JWT token
+  const userEmail = req.user.email; 
   
   try {
       // Find the booking and verify ownership
       const booking = await BookingsFields.findOne({
           where: {
               id: bookingId,
-              email: userEmail // Ensure the booking belongs to the authenticated user
+              email: userEmail 
           }
       });
 
