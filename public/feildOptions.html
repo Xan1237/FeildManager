@@ -9,6 +9,12 @@
         body {
             background-color: #eee;
         }
+
+        @media (max-width: 400px) {
+            #buttonBooking{
+                justify-content: center;
+            }
+        }
         
     </style>
 </head>
@@ -19,8 +25,8 @@
             <div class="col-md-4">
                 <input type="text" class="form-control" id="searchBar" placeholder="Search...">
             </div>
-            <div class="col-md-8 d-flex justify-content-end">
-                <button id="bookings" type="button" class="btn btn-success">My Bookings</button>
+            <div id="buttonBooking" class="col-md-8 d-flex pt-2 justify-content-sm-end justify-content-center">
+                <a href="MyBookings.html" ><button id="bookings" type="button" class="btn btn-success">My Bookings</button></a> 
             </div>
         </div>
 
@@ -32,7 +38,7 @@
                     <div class="card-body">
                         <h5 class="card-title">McDonald Sports Park</h5>
                         <p class="card-text">This is a short description for card 1.</p>
-                        <a href="McDonald.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
+                        <a href="Fields/McDonald.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
                     </div>
                 </div>
             </div>
@@ -42,7 +48,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Conrose Park</h5>
                         <p class="card-text">This is a short description for card 2.</p>
-                        <a href="Conrose.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
+                        <a href="Fields/Conrose.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
                     </div>
                 </div>
             </div>
@@ -52,7 +58,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Tremont Baseball Field</h5>
                         <p class="card-text">This is a short description for card 3.</p>
-                        <a href="Tremont.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
+                        <a href="Fields/Tremont.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
                     </div>
                 </div>
             </div>
@@ -62,7 +68,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Mainland Commons Baseball Field</h5>
                         <p class="card-text">This is a short description for card 4.</p>
-                        <a href="Mainland.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
+                        <a href="Fields/Mainland.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
                     </div>
                 </div>
             </div>
@@ -72,7 +78,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Graves-Oakley</h5>
                         <p class="card-text">This is a short description for card 5.</p>
-                        <a href="Graves.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
+                        <a href="Fields/Graves.html"><button id="bookings" type="button" class="btn btn-success">Book</button></a>
                     </div>
                 </div>
             </div>
@@ -82,7 +88,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Eddie-Leblanc</h5>
                         <p class="card-text">This is a short description for card 6.</p>
-                        <a href="Conrose.html"><button id="bookings" type="button" class="btn btn-success">Book</button><a href="Conrose.html"></a>
+                        <a href="Fields/Eddie.html"><button id="bookings" type="button" class="btn btn-success">Book</button><a href="Conrose.html"></a>
                     </div>
                 </div>
             </div>

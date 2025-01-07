@@ -8,14 +8,14 @@ submitButton.addEventListener('click', function(event){
     let day = document.getElementById("date").value;
     let time = document.getElementById("time").value;
     let phone = document.getElementById("phone").value;
-
+    let field = "Conrose";
     console.log(email)
     event.preventDefault();
     fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            field : "Conrose",
+            field : field,
             email: email,
             userName: userName,
             phone, phone,

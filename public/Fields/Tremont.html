@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* General Page Styling */
+        body {
+            background-color: #eee; /* Dull Grass Green */
+            color: #3e2723; /* Dark brown text */
+            height: 100vh;
+        }
+
+        .container {
+            margin-top: 50px;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #8B4513; /* Dirt-like Brown Title */
+            font-weight: bold;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #3e2723; /* Dark Brown Label Text */
+        }
+
+        .btn-primary {
+            background-color:  #6F3A11; /* Dirt Brown Button */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #8d6346; /* Darker Dirt Brown Hover */
+        }
+
+        .form-control:focus {
+            border-color: #A0522D; /* SaddleBrown Focus */
+            box-shadow: 0 0 0 0.2rem rgba(160, 82, 45, 0.25);
+        }
+
+        /* Home Plate Styling */
+
+
+
+        /* Mobile Responsiveness */
+        @media (max-width: 1000px) {
+            .container {
+                width: auto;
+                height: 100vh;
+                margin-top: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mb-4">Appointment Booking</h2>
+        <div class=" d-flex justify-content-end">
+            <a href="../MyBookings.html" ><button id="bookings" type="button" class="btn btn-success">My Bookings</button></a> 
+        </div>
+        <form>
+            <div class="mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="phone" class="form-control" id="phone" placeholder="Enter your phone number here" required>
+            </div>
+            <div class="mb-3">
+                <label for="date" class="form-label">Select Date</label>
+                <input type="date" class="form-control" id="date" required>
+            </div>
+            <div class="mb-3">
+                <label for="time" class="form-label">Select Time</label>
+                <select class="form-control" id="time" required>
+                    <option value="">Choose a time</option>
+                    <option value="00:00">00:00</option>
+                    <option value="01:00">01:00</option>
+                    <option value="02:00">02:00</option>
+                    <option value="03:00">03:00</option>
+                    <option value="04:00">04:00</option>
+                    <option value="05:00">05:00</option>
+                    <option value="06:00">06:00</option>
+                    <option value="07:00">07:00</option>
+                    <option value="08:00">08:00</option>
+                    <option value="09:00">09:00</option>
+                    <option value="10:00">10:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="12:00">12:00</option>
+                    <option value="13:00">13:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="16:00">16:00</option>
+                    <option value="17:00">17:00</option>
+                    <option value="18:00">18:00</option>
+                    <option value="19:00">19:00</option>
+                    <option value="20:00">20:00</option>
+                    <option value="21:00">21:00</option>
+                    <option value="22:00">22:00</option>
+                    <option value="23:00">23:00</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="notes" class="form-label">Additional Notes</label>
+                <textarea class="form-control" id="notes" rows="3" placeholder="Enter any additional details"></textarea>
+            </div>
+            <button type="submit" id="submit" class="btn btn-primary w-100">Book Appointment</button>
+        </form>
+    </div>
+
+    <!-- Baseball Home Plate at the Bottom -->
+    <div class="home-plate"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../FieldScripts/Tremont.js"></script>
+</body>
+</html>

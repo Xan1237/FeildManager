@@ -3,23 +3,36 @@ import express from 'express';
 import mysql from 'mysql2/promise';
 import { fileURLToPath } from 'url';
 import bcrypt from "bcrypt";
+import fs from 'fs'
 import jwt from "jsonwebtoken"; // Add JWT for authentication
 import dotenv from "dotenv/config";
 
 import { Sequelize, DataTypes, Op } from 'sequelize';
 const app = express();
 const port = process.env.PORT || 8080;
+console.log(process.env.CA);
+//allows use of sequalize to give commands to the progresql server
 
-const sequelize = new Sequelize(process.env.DB_URL, {
-  dialect: "postgres",
-  dialectOptions: {
+
+const sequelize = new Sequelize(
+  "defaultdb",
+  "avnadmin",
+  process.env.WORD,
+  {
+    host: process.env.DB_HOST,
+    port: 27176,
+    dialect: 'postgres',
+    dialectOptions: {
       ssl: {
-          require: true,
-          rejectUnauthorized: false
+        require: true,
+        rejectUnauthorized: false // Disable SSL certificate verification
       }
-  },
-  logging: false,
-})
+    }
+  }
+);
+
+
+
 
 sequelize.sync().then(() => {
   console.log("db conected");
@@ -28,7 +41,6 @@ sequelize.sync().then(() => {
 });
 
 const login = sequelize.define('login', {
-
   email: {
     type: DataTypes.STRING,
     unique: true,
@@ -41,30 +53,29 @@ const login = sequelize.define('login', {
   },
 });
 
-const bookings = sequelize.define("bookings", {
+const BookingsFields = sequelize.define("BookingsFields", {
+  field: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   userName: {
     type: DataTypes.STRING,
-    unique: true,
     allowNull: false
   },
   email: {
     type: DataTypes.STRING,
-    unique: true,
     allowNull: false
   },
   phone: {
     type: DataTypes.STRING,
-    unique: true,
     allowNull: false
   },
   day: {
     type: DataTypes.STRING,
-    unique: true,
     allowNull: false
   },
   time: {
     type: DataTypes.STRING,
-    unique: true,
     allowNull: false
   }
 })
@@ -85,7 +96,8 @@ async function createBooking(field1, email1, name1, phone1, day1, time1){
   console.log(time1);
   console.log(email1);
   try{
-    const newBooking = await bookings.create({
+    const newBooking = await BookingsFields.create({
+      field: field1,
       userName: name1,
       email: email1,
       phone: phone1,
@@ -161,30 +173,30 @@ async function verifyUser(email, password1) {
 }
 
 // JWT generation function for successful login
-function generateAuthToken(userId) {
-  const payload = { userId };
+function generateAuthToken(email) {
+  const payload = { email }; // Store email in token payload
   const secret = 'your_jwt_secret'; // Store this secret in an environment variable
-  const options = { expiresIn: '1h' }; // Token expiration time
+  const options = { expiresIn: '1h' };
   return jwt.sign(payload, secret, options);
 }
 
 // Middleware to verify JWT token
 function verifyToken(req, res, next) {
-  const token = req.header('Authorization')?.replace('Bearer ', ''); // Extract token from Authorization header
+  const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
     return res.status(401).json({ success: false, message: 'No token provided' });
   }
 
   try {
-    //checks token validity
-    const decoded = jwt.verify(token, 'your_jwt_secret'); 
-    req.user = decoded; 
-    next(); 
+    const decoded = jwt.verify(token, 'your_jwt_secret');
+    req.user = decoded; // This will now contain the email
+    next();
   } catch (error) {
     return res.status(401).json({ success: false, message: 'Invalid or expired token' });
   }
 }
+
 
 // Create new user  (for account creation)
 app.post('/api/users', async (req, res) => {
@@ -197,7 +209,6 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
-// Login endpoint to authenticate and issue JWT token
 app.post('/api/users/login', async (req, res) => {
   const { email, password1 } = req.body;
   
@@ -205,7 +216,7 @@ app.post('/api/users/login', async (req, res) => {
     const valid = await verifyUser(email, password1);
     if (valid) {
       const token = generateAuthToken(email);
-      res.status(200).json({ success: true, token }); // Send JWT token upon successful login
+      res.status(200).json({ success: true, token });
     } else {
       res.status(401).json({ success: false, message: "Invalid email or password" });
     }
@@ -214,13 +225,23 @@ app.post('/api/users/login', async (req, res) => {
   }
 });
 
+
+
 // Protected route (requires valid token)
 app.get('/api/protected', verifyToken, (req, res) => {
   // This route will only be accessible if the token is valid
   res.json({ success: true, message: "You have access to this protected route" });
 });
 
-
+app.get('/api/MyBookings', verifyToken, async(req, res) => {
+  const email = req.user.email; // Now this will work correctly
+  try {
+    const myBookings = await BookingsFields.findAll({ where: { email } });
+    res.json(myBookings);
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error retrieving bookings" });
+  }
+});
 
 app.post('/api/appointments', async(req, res) => {
   // Extract the data from the request body
@@ -242,27 +263,97 @@ app.post('/api/appointments', async(req, res) => {
 
 
 //receive apointment information
-app.post('/api/bookings', async(req, res) => {
+app.post('/api/bookings', verifyToken,  async(req, res) => {
   try {
       const { field, email, userName, phone,  day, time } = req.body;
-      const existingBoking = await bookings.findOne({ day: day, time: time });
+      console.log(field);
+      let hours = parseInt((time.slice(0,2)));
+      let increase = (hours +1) %24;
+      let decrease = (hours-1) %24;
+      if (decrease<0){
+        decrease += 24;
+      }
+      let after = time;
+      let before = time;
+      after = increase + time.slice(2, time.length);
+      before = decrease+ time.slice(2, time.length);
+      console.log(after);
+      console.log(before);
+      let existingBoking = await BookingsFields.findOne({ where: { field: field, day: day, time: time } });
+      if(existingBoking==null){
+         existingBoking = await BookingsFields.findOne({ where: { field: field, day: day, time: after } });
+      }
+      if(existingBoking==null){
+        existingBoking = await BookingsFields.findOne({ where: { field: field, day: day, time: before } });
+      }
       console.log(existingBoking);
       if(existingBoking==null){
       console.log(`Email: ${email}, Username: ${userName}, Day: ${day}, Time: ${time}`);
-      createBooking(field, email, userName, phone,  day, time)
+      await createBooking(field, req.user.email, userName, phone,  day, time);
       }
       else{
         console.log("apointment already created")
       }
       res.status(201).json({
         message: 'Appointment successfully created',
-        bookings: { email, userName, day, time }
+        BookingsFields: { email, userName, day, time }
       });
     } catch (error) {
       console.error('Backend Error:', error);
       res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+app.delete('/api/bookings/:id', verifyToken, async (req, res) => {
+  const bookingId = req.params.id;
+  const userEmail = req.user.email; // Get email from JWT token
+  
+  try {
+      // Find the booking and verify ownership
+      const booking = await BookingsFields.findOne({
+          where: {
+              id: bookingId,
+              email: userEmail // Ensure the booking belongs to the authenticated user
+          }
+      });
+
+      if (!booking) {
+          return res.status(404).json({
+              success: false,
+              message: 'Booking not found or you do not have permission to delete it'
+          });
+      }
+
+      // Delete the booking
+      await booking.destroy();
+
+      // Send success response
+      res.status(200).json({
+          success: true,
+          message: 'Booking successfully deleted',
+          deletedBookingId: bookingId
+      });
+
+  } catch (error) {
+      console.error('Error deleting booking:', error);
+      
+      // Handle specific error types
+      if (error.name === 'SequelizeValidationError') {
+          return res.status(400).json({
+              success: false,
+              message: 'Invalid booking data provided'
+          });
+      }
+
+      // Generic error response
+      res.status(500).json({
+          success: false,
+          message: 'Internal server error while deleting booking'
+      });
+  }
+});
+
 
 // connects to index.html
 app.get('/', (req, res) => {
