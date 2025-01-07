@@ -275,6 +275,12 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
       }
       let after = time;
       let before = time;
+      if(increase <10){
+        increase = "0" + increase;
+      }
+      if(decrease <10){
+        decrease = "0" + decrease;
+      }
       after = increase + time.slice(2, time.length);
       before = decrease+ time.slice(2, time.length);
       console.log(after);
@@ -294,10 +300,20 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
       else{
         console.log("apointment already created")
       }
+      if(existingBoking==null){
+        let success = true;
       res.status(201).json({
         message: 'Appointment successfully created',
-        BookingsFields: { email, userName, day, time }
+        BookingsFields: { email, userName, day, time, success }
       });
+    }
+    else{
+      let success = false;
+      res.status(201).json({
+        message: 'Time not available',
+        BookingsFields: { email, userName, day, time, success },
+      });
+    }
     } catch (error) {
       console.error('Backend Error:', error);
       res.status(500).json({ error: 'Internal Server Error' });

@@ -44,6 +44,7 @@ submitButton.addEventListener('click', async function (event) {
 
         if (response.ok) {
             console.log("Booking successful:", result);
+            console.log(result.message + "kkkkkkk");
             alert("Booking successfully created!");
         } else {
             console.error("Booking failed:", result.error || "Unknown error");
