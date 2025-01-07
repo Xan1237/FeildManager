@@ -70,10 +70,14 @@ login.addEventListener("click", function() {
                 console.log("Login successful");
                 console.log(data.token);
                 //goes to feild selection site
-                window.location.href = 'feildOptions.html'; 
+                window.location.href = 'fieldOptions\\feildOptions.html'; 
             } else {
+                let email = document.getElementById("email");
+                let password1 = document.getElementById("password1");
                 console.log(data.token);
                 console.log("Login failed:", data.message);
+                password1.style.borderColor = "red";
+                email.style.borderColor = "red";
             }
         })
         .catch((error) => {
@@ -146,10 +150,14 @@ document.addEventListener('keydown', function(event) {
                 console.log("Login successful");
                 console.log(data.token);
                 //goes to feild selection site
-                window.location.href = 'feildOptions.html'; 
+                window.location.href = 'fieldOptions\\feildOptions.html'; 
             } else {
+                let password1 = document.getElementById("password1");
+                let email = document.getElementById("email");
                 console.log(data.token);
                 console.log("Login failed:", data.message);
+                password1.style.borderColor = "red";
+                email.style.borderColor = "red";
             }
         })
         .catch((error) => {
