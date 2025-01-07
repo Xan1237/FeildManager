@@ -72,6 +72,7 @@ login.addEventListener("click", function() {
                 //goes to feild selection site
                 window.location.href = 'fieldOptions\\feildOptions.html'; 
             } else {
+                //login failed
                 let email = document.getElementById("email");
                 let password1 = document.getElementById("password1");
                 console.log(data.token);
@@ -86,6 +87,7 @@ login.addEventListener("click", function() {
     }
 });
 
+//changes layout to acomodate a account creation form
 createAccount.addEventListener("click", function() {
     newAccount.style.display = "block";
     loginText.innerHTML = "Create Your New Account";

@@ -2,28 +2,27 @@
 async function displayBookings() {
     try {
         const token = localStorage.getItem('authToken');
-        
         if (!token) {
-            window.location.href = '/login.html'; // Redirect to login if no token
+            window.location.href = 'index.html'; 
             return;
         }
-
+        //gets bookings
         const response = await fetch('/api/MyBookings', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
-
         if (!response.ok) {
             throw new Error('Failed to fetch bookings');
         }
 
+        //gets booking
         const bookings = await response.json();
         const bookingTable = document.getElementById('booking-table');
         bookingTable.innerHTML = ''; // Clear existing rows
 
-        // Add each booking to the table
+        // adds new version for every booking
         bookings.forEach((booking, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -62,6 +61,7 @@ async function handleDeleteBooking(event) {
     const bookingId = event.target.dataset.bookingId;
     
     try {
+        //gets jwt auth token
         const token = localStorage.getItem('authToken');
         const response = await fetch(`/api/bookings/${bookingId}`, {
             method: 'DELETE',

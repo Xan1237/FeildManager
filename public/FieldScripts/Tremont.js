@@ -59,4 +59,5 @@ submitButton.addEventListener('click', async function (event) {
         console.error("Network or server error:", error);
         alert("An error occurred while trying to book. Please try again later.");
     }
+    window.location.href = "../myBookings/MyBookings.html"
 });
