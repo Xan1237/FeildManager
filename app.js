@@ -10,7 +10,7 @@ import { Sequelize, DataTypes, Op } from 'sequelize';
 
 //assignment statments
 const app = express();
-const port = process.env.PORT || 8080;
+
 console.log(process.env.CA);
 
 //allows use of sequalize to give commands to the progresql server
