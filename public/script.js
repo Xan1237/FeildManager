@@ -33,7 +33,7 @@ login.addEventListener("click", function() {
         alert("Please enter an Email");
         valid = false;
     }
-    if(valid){
+    if(valid || !create){
     if (create) {  
         fetch('/api/users', {
             method: 'POST',
