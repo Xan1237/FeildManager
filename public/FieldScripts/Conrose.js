@@ -81,35 +81,48 @@ function checkTime(){
 
 console.log(day);
 async function getTimes() {
-    let day = document.getElementById("date");
-    let array = document.getElementsByTagName("option");
-    Array.from(array).forEach(option =>{
-        option.style.display = "block";
-    })
+    let day = document.getElementById("date").value;
+    let timeSelect = document.getElementById("time");
+
+    // Clear the existing options
+    timeSelect.innerHTML = "";
+
+    // Fetch available times from the backend
     const response = await fetch('/api/availableTimes', {
         method: 'POST',
-        headers: { 
+        headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            date : day.value
+            date: day
         })
     });
+
     const result = await response.json();
-     if(response.ok) {
-        let red = result;
-        if(red.dates.length>0){
-            Array.from(array).forEach(option =>{
-                red.dates.forEach(date =>{
-                    if(option.value == date.time){
-                        option.style.display = "none";
-                    }
-                });
-                
-            });
-        }
+    if (response.ok) {
+        const allTimes = [
+            "00:00", "01:00", "02:00", "03:00", "04:00", "05:00",
+            "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",
+            "12:00", "13:00", "14:00", "15:00", "16:00", "17:00",
+            "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"
+        ];
 
+        const unavailableTimes = result.dates.map(item => item.time);
+
+        allTimes.forEach(time => {
+            const option = document.createElement("option");
+            option.value = time;
+            option.textContent = time;
+
+            if (unavailableTimes.includes(time)) {
+                option.disabled = true;
+                option.style.color = "red";
+            }
+
+            timeSelect.appendChild(option);
+        });
+    } else {
+        console.error("Failed to fetch available times:", result.error || "Unknown error");
+        alert("Failed to fetch available times. Please try again later.");
     }
-
-};
-
+}
