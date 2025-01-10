@@ -4,12 +4,43 @@ submitButton.addEventListener('click', async function (event) {
 
     // Collect form values
     let email = document.getElementById("email").value;
-    let userName = document.getElementById("name").value;
-    let day = document.getElementById("date").value;
-    let time = document.getElementById("time").value;
-    let phone = document.getElementById("phone").value;
-    let field = "Conrose";
+    let emailField = document.getElementById("email");
 
+    let userName = document.getElementById("name").value;
+    let userNameField = document.getElementById("name");
+    let day = document.getElementById("date").value;
+    let dayField = document.getElementById("date");
+
+    let time = document.getElementById("time").value;
+    let timeField = document.getElementById("time");
+
+    let phone = document.getElementById("phone").value;
+    let phoneField = document.getElementById("phone");
+
+    let field = "Conrose";
+    let valid = true;
+    if(userName == ""){
+        userNameField.style.borderColor = "red";
+        console.log("hh")
+        valid = false;
+    }
+    if(phone==""){
+        phoneField.style.borderColor = "red";
+        valid = false;
+    }
+    if(day==""){
+        dayField.style.borderColor = "red";
+        valid = false;
+    }
+    if(time==""){
+        timeField.style.borderColor = "red";
+        valid= false;
+    }
+    if(email==""){
+        emailField.style.borderColor = "red";
+        valid=false;
+    }
+    if(valid){
     console.log("Email:", email);
     console.log("Time:", time);
 
@@ -61,6 +92,7 @@ submitButton.addEventListener('click', async function (event) {
         alert("An error occurred while trying to book. Please try again later.");
     }
     window.location.href = "../myBookings/MyBookings.html"
+}
 });
 
 let time = document.getElementById("time");
