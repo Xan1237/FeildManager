@@ -23,8 +23,17 @@ login.addEventListener("click", function() {
     let password1 = document.getElementById("password1").value;
     let password2 = document.getElementById("password2").value;
     let email = document.getElementById("email").value;
-
+    let valid = true;
     //create account logic
+    if(password1 != password2){
+        alert("Passwords do not match");
+        valid = false;
+    }
+    if(email ==""){
+        alert("Please enter an Email");
+        valid = false;
+    }
+    if(valid){
     if (create) {  
         fetch('/api/users', {
             method: 'POST',
@@ -86,6 +95,7 @@ login.addEventListener("click", function() {
             console.error("Error:", error);
         });
     }
+    }   
 });
 
 //changes layout to acomodate a account creation form

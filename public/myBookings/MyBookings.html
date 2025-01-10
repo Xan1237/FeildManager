@@ -25,6 +25,12 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
         h2 {
             color: #4a90e2;
             font-weight: bold;
@@ -63,21 +69,30 @@
                 max-width: none;
             }
 
+            .button-container {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .button-container .btn {
+                width: 200px;
+            }
+
             .table-responsive {
                 overflow-x: auto;
                 display: flex;
-                justify-content: center; /* Center the table */
+                justify-content: center;
                 width: 100%;
             }
 
             table {
                 width: 100%;
-                margin: 0 auto; /* Center the table horizontally */
+                margin: 0 auto;
                 border-collapse: collapse;
             }
 
             thead {
-                display: none; /* Hide table headers */
+                display: none;
             }
 
             tbody tr {
@@ -93,7 +108,7 @@
                 display: flex;
                 justify-content: center;
                 padding: 5px 0;
-                text-align: center; /* Center text inside each cell */
+                text-align: center;
             }
 
             tbody tr td::before {
@@ -108,22 +123,26 @@
                 margin-left: auto;
             }
 
-            /* Ensure the buttons are centered inside the card */
             .btn-delete {
                 margin: 0 auto;
                 display: block;
                 text-align: center;
-                width: 100%; /* Make button span across full width */
+                width: 100%;
             }
-
         }
-
     </style>
 </head>
 <body>
     <div class="container">
         <h2 id="title" class="text-center mb-4">My Bookings</h2>
         
+        <!-- Field Options Button -->
+        <div class="button-container">
+            <a href="../fieldOptions/feildOptions.html">
+                <button id="bookings" type="button" class="btn btn-success">Field Options</button>
+            </a>
+        </div>
+
         <!-- Bookings Table -->
         <div class="table-responsive">
             <table class="table table-striped">
@@ -140,8 +159,6 @@
                     </tr>
                 </thead>
                 <tbody id="booking-table">
-                    <!-- Sample Data Row, can be dynamically added via JavaScript -->
-
                 </tbody>
             </table>
         </div>
