@@ -97,3 +97,33 @@ time.addEventListener("click", async function() {
     }
 
 });
+
+time.addEventListener("touchstart", async function() {
+    let day = document.getElementById("date");
+    let array = document.getElementsByTagName("option");
+    const response = await fetch('/api/availableTimes', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            date : day.value
+        })
+    });
+    const result = await response.json();
+     if(response.ok) {
+        let red = result;
+        if(red.dates.length>0){
+            Array.from(array).forEach(option =>{
+                red.dates.forEach(date =>{
+                    if(option.value == date.time){
+                        option.style.color = "red";
+                    }
+                });
+                
+            });
+        }
+
+    }
+
+});
