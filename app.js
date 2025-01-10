@@ -299,12 +299,6 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
 
       //the multitude of if statments checks the times after and before to make sure theres no overlap
       let existingBoking = await BookingsFields.findOne({ where: { field: field, day: day, time: time } });
-      if(existingBoking==null){
-         existingBoking = await BookingsFields.findOne({ where: { field: field, day: day, time: after } });
-      }
-      if(existingBoking==null){
-        existingBoking = await BookingsFields.findOne({ where: { field: field, day: day, time: before } });
-      }
       console.log(existingBoking);
 
       //The time is available
