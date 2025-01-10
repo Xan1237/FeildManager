@@ -63,3 +63,37 @@ submitButton.addEventListener('click', async function (event) {
     }
     window.location.href = "../myBookings/MyBookings.html"
 });
+
+let time = document.getElementById("time");
+time.addEventListener("click", async function() {
+    let day = document.getElementById("date");
+    let array = document.getElementsByTagName("option");
+    const response = await fetch('/api/availableTimes', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            date : day.value
+        })
+    });
+    const result = await response.json();
+     if(response.ok) {
+        let red = result;
+        console.log(array)
+        if(red.dates.length>0){
+            Array.from(array).forEach(option =>{
+                red.dates.forEach(date =>{
+                    console.log(option);
+                    console.log(date.time)
+                    if(option.value == date.time){
+                        option.style.color = "red";
+                    }
+                });
+                
+            });
+        }
+
+    }
+
+});

@@ -337,6 +337,25 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
   }
 });
 
+
+//sends list of available times
+app.post("/api/availableTimes", async(req, res)=>{
+  try{
+    const {date} = req.body;
+    const myBookings = await BookingsFields.findAll({ where: { day : date } });
+    res.status(201).json({
+      dates : myBookings
+    })
+  }
+ catch (error) {
+  console.error('Backend Error:', error);
+  res.status(500).json({ error: 'Internal Server Error' });
+}
+});
+
+
+
+
 //deletes bookings given a user action
 app.delete('/api/bookings/:id', verifyToken, async (req, res) => {
   const bookingId = req.params.id;
