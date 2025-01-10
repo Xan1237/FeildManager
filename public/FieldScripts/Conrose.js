@@ -1,5 +1,4 @@
 let submitButton = document.getElementById("submit");
-
 submitButton.addEventListener('click', async function (event) {
     event.preventDefault(); // Prevent default form submission immediately
 
@@ -65,42 +64,28 @@ submitButton.addEventListener('click', async function (event) {
 });
 
 let time = document.getElementById("time");
-time.addEventListener("click", async function() {
-    let day = document.getElementById("date");
-    let array = document.getElementsByTagName("option");
-    const response = await fetch('/api/availableTimes', {
-        method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            date : day.value
-        })
-    });
-    const result = await response.json();
-     if(response.ok) {
-        let red = result;
-        console.log(array)
-        if(red.dates.length>0){
-            Array.from(array).forEach(option =>{
-                red.dates.forEach(date =>{
-                    console.log(option);
-                    console.log(date.time)
-                    if(option.value == date.time){
-                        option.style.color = "red";
-                    }
-                });
-                
-            });
+let day = document.getElementById("date").value;
+
+
+checkTime();
+function checkTime(){
+        let dayNew = document.getElementById("date").value;
+        if(day != dayNew){
+            day = dayNew;
+            getTimes();
         }
+        setTimeout(checkTime, 1000);
+};
 
-    }
 
-});
 
-time.addEventListener("touchstart", async function() {
+console.log(day);
+async function getTimes() {
     let day = document.getElementById("date");
     let array = document.getElementsByTagName("option");
+    Array.from(array).forEach(option =>{
+        option.style.display = "block";
+    })
     const response = await fetch('/api/availableTimes', {
         method: 'POST',
         headers: { 
@@ -117,7 +102,7 @@ time.addEventListener("touchstart", async function() {
             Array.from(array).forEach(option =>{
                 red.dates.forEach(date =>{
                     if(option.value == date.time){
-                        option.style.color = "red";
+                        option.style.display = "none";
                     }
                 });
                 
@@ -126,4 +111,5 @@ time.addEventListener("touchstart", async function() {
 
     }
 
-});
+};
+
