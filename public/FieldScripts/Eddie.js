@@ -115,7 +115,7 @@ console.log(day);
 async function getTimes() {
     let day = document.getElementById("date").value;
     let timeSelect = document.getElementById("time");
-
+    let field = "Eddie"
     // Clear the existing options
     timeSelect.innerHTML = "";
 
@@ -126,7 +126,8 @@ async function getTimes() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            date: day
+            date: day,
+            field : field
         })
     });
 

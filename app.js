@@ -335,8 +335,8 @@ app.post('/api/bookings', verifyToken,  async(req, res) => {
 //sends list of available times
 app.post("/api/availableTimes", async(req, res)=>{
   try{
-    const {date} = req.body;
-    const myBookings = await BookingsFields.findAll({ where: { day : date } });
+    const {date, field} = req.body;
+    const myBookings = await BookingsFields.findAll({ where: { day : date, field: field } });
     res.status(201).json({
       dates : myBookings
     })
