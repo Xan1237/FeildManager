@@ -25,7 +25,7 @@ login.addEventListener("click", function() {
     let email = document.getElementById("email").value;
     let valid = true;
     //create account logic
-    if(password1 != password2){
+    if((password1 != password2) && create){
         alert("Passwords do not match");
         valid = false;
     }
